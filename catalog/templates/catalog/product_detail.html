@@ -1,90 +1,67 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-    <!-- Gallery -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; margin-top: 20px;">
     <div>
-        {% if product.images.exists %}
-            <div class="bg-gray-100 rounded-2xl overflow-hidden mb-4 h-96" id="main-image-container">
-                <img id="main-image" src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
-            </div>
-            {% if product.images.count > 1 %}
-                <div class="flex gap-2 overflow-x-auto py-2">
-                    {% for img in product.images.all %}
-                        <button onclick="document.getElementById('main-image').src='{{ img.image.url }}'"
-                                class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 {% if forloop.first %}border-pink-500{% else %}border-transparent{% endif %} hover:border-pink-400 transition">
-                            <img src="{{ img.image.url }}" alt="Фото {{ forloop.counter }}" class="w-full h-full object-cover">
-                        </button>
-                    {% endfor %}
-                </div>
+        <div style="border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); background: #fff;">
+            {% if product.images.exists %}
+                <img id="main-image" src="{{ product.images.first.image.url }}" style="width: 100%; height: 450px; object-fit: cover;">
+            {% else %}
+                <div style="height: 450px; display: flex; align-items: center; justify-content: center; background: var(--secondary-color); font-size: 5rem;">🍰</div>
             {% endif %}
-        {% else %}
-            <div class="bg-gray-100 rounded-2xl h-96 flex items-center justify-center text-gray-400 text-6xl">🍰</div>
+        </div>
+
+        {% if product.images.count > 1 %}
+        <div style="display: flex; gap: 10px; margin-top: 15px; overflow-x: auto; padding-bottom: 5px;">
+            {% for img in product.images.all %}
+                <img src="{{ img.image.url }}"
+                     onclick="document.getElementById('main-image').src=this.src"
+                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 2px solid transparent; transition: 0.2s;"
+                     onmouseover="this.style.borderColor='var(--primary-color)'"
+                     onmouseout="this.style.borderColor='transparent'">
+            {% endfor %}
+        </div>
         {% endif %}
     </div>
 
-    <!-- Product Info -->
-    <div>
-        <span class="text-sm text-pink-600 font-medium">{{ product.category.name }}</span>
-        <h1 class="text-3xl font-bold mt-1 mb-4">{{ product.name }}</h1>
+    <div style="padding: 20px 0;">
+        <p style="color: var(--primary-color); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+            {{ product.category.name }}
+        </p>
+        <h1 style="margin: 10px 0 20px; font-size: 2.5rem;">{{ product.name }}</h1>
 
-        {% if product.has_discount %}
-            <div class="flex items-center gap-3 mb-4">
-                <span class="text-gray-400 line-through text-xl">{{ product.price }} ₽</span>
-                <span class="text-3xl font-bold text-pink-600">{{ product.discount_price|floatformat:0 }} ₽</span>
-                <span class="bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">-{{ product.discount_percent }}%</span>
+        <p style="font-size: 1.1rem; color: #555; line-height: 1.8; margin-bottom: 30px;">
+            {{ product.description }}
+        </p>
+
+        <div style="background: var(--secondary-color); padding: 25px; border-radius: 15px; margin-bottom: 30px;">
+            <div style="margin-bottom: 20px;">
+                <span style="font-size: 2rem; font-weight: bold; color: var(--text-color);">{{ product.price }} ₽</span>
+                <span style="color: #888; margin-left: 10px;">/ шт.</span>
             </div>
-        {% else %}
-            <p class="text-3xl font-bold text-pink-600 mb-4">{{ product.price }} ₽</p>
-        {% endif %}
 
-        <p class="text-gray-600 mb-6 leading-relaxed">{{ product.description|linebreaks }}</p>
-
-        <!-- Add to Cart -->
-        <form method="post" action="{% url 'cart:cart_add' product.id %}" class="flex items-center gap-4">
-            {% csrf_token %}
-            <div class="flex items-center border rounded-lg">
-                <button type="button" onclick="changeQty(-1)" class="px-3 py-2 hover:bg-gray-100 rounded-l-lg">−</button>
-                <input type="number" name="quantity" id="qty-input" value="1" min="1" class="w-12 text-center border-x py-2 focus:outline-none">
-                <button type="button" onclick="changeQty(1)" class="px-3 py-2 hover:bg-gray-100 rounded-r-lg">+</button>
-            </div>
-            <button type="submit" class="bg-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-pink-700 transition flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
-                В корзину
-            </button>
-        </form>
+            <form action="{% url 'cart:cart_add' product.id %}" method="post" style="display: flex; gap: 10px;">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="1" min="1" style="width: 70px; margin: 0; text-align: center;">
+                <button type="submit" class="btn" style="flex-grow: 1; font-size: 1.1rem;">
+                    🛒 Добавить в корзину
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- Related Products -->
 {% if related_products %}
-<section>
-    <h2 class="text-2xl font-bold mb-6">Похожие товары</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {% for p in related_products %}
-            <a href="{{ p.get_absolute_url }}" class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden group">
-                <div class="relative h-48 bg-gray-100 overflow-hidden">
-                    {% if p.images.first %}
-                        <img src="{{ p.images.first.image.url }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                    {% else %}
-                        <div class="flex items-center justify-center h-full text-gray-400 text-4xl">🍰</div>
-                    {% endif %}
-                </div>
-                <div class="p-4">
-                    <h3 class="font-semibold text-sm mb-1 truncate">{{ p.name }}</h3>
-                    <p class="text-pink-600 font-bold">{{ p.price }} ₽</p>
-                </div>
+<h2 style="margin-top: 60px; margin-bottom: 30px;">Вам также может понравиться</h2>
+<div class="product-grid">
+    {% for p in related_products %}
+        <div class="product-card">
+            <a href="{{ p.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+                <img src="{{ p.images.first.image.url }}" class="product-image" style="height: 150px;">
+                <h4 style="margin: 10px 0 5px;">{{ p.name }}</h4>
+                <p style="color: var(--primary-color); font-weight: bold;">{{ p.price }} ₽</p>
             </a>
-        {% endfor %}
-    </div>
-</section>
+        </div>
+    {% endfor %}
+</div>
 {% endif %}
-
-<script>
-function changeQty(delta) {
-    const input = document.getElementById('qty-input');
-    let val = parseInt(input.value) || 1;
-    val = Math.max(1, val + delta);
-    input.value = val;
-}
-</script>
 {% endblock %}

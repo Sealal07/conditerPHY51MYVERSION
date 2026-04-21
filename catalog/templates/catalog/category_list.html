@@ -1,20 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-8">Категории</h1>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<h1 style="margin-bottom: 30px;">Категории десертов</h1>
+<div class="product-grid">
     {% for cat in categories %}
-        <a href="{{ cat.get_absolute_url }}" class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition flex items-center gap-4">
-            <div class="text-4xl">
-                {% if 'торт' in cat.name|lower %}🎂{% elif 'печень' in cat.name|lower %}🍪{% elif 'конфет' in cat.name|lower %}🍬{% elif 'пирожн' in cat.name|lower %}🧁{% elif 'шоколад' in cat.name|lower %}🍫{% else %}🍰{% endif %}
+        <a href="{{ cat.get_absolute_url }}" class="category-card">
+            <div class="category-icon">
+                {% if 'торт' in cat.name|lower %}🎂{% elif 'печень' in cat.name|lower %}🍪{% elif 'конфет' in cat.name|lower %}🍬{% elif 'пирожн' in cat.name|lower %}🧁{% else %}🍰{% endif %}
             </div>
             <div>
-                <h3 class="font-bold text-lg">{{ cat.name }}</h3>
-                <p class="text-gray-500 text-sm">{{ cat.description|truncatechars:80 }}</p>
-                <p class="text-pink-600 text-sm mt-1">{{ cat.products.filter.is_active.count }} товаров</p>
+                <h3 style="margin: 0;">{{ cat.name }}</h3>
+                <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">{{ cat.products.count }} товаров</p>
             </div>
         </a>
     {% empty %}
-        <p class="text-gray-500 col-span-full">Категории пока не добавлены</p>
+        <p>Категории скоро появятся!</p>
     {% endfor %}
 </div>
 {% endblock %}

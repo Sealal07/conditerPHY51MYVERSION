@@ -1,35 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="text-3xl font-bold mb-2 text-red-500">🔥 Акции и скидки</h1>
-<p class="text-gray-500 mb-8">Специальные предложения на кондитерские изделия</p>
+<h1 style="color: var(--primary-color);">🔥 Сладкие акции</h1>
+<p style="color: #666; margin-bottom: 40px;">Успейте попробовать по выгодной цене</p>
 
-{% if promotions %}
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<div class="product-grid">
     {% for product in promotions %}
-        <a href="{{ product.get_absolute_url }}" class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden group relative">
-            <div class="absolute top-3 right-3 bg-red-500 text-white text-sm font-bold w-12 h-12 rounded-full flex items-center justify-center z-10 shadow">
-                -{{ product.discount_percent }}%
-            </div>
-            <div class="relative h-56 bg-gray-100 overflow-hidden">
-                {% if product.images.first %}
-                    <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                {% else %}
-                    <div class="flex items-center justify-center h-full text-gray-400 text-5xl">🎂</div>
-                {% endif %}
-            </div>
-            <div class="p-4">
-                <h3 class="font-semibold mb-1">{{ product.name }}</h3>
-                <p class="text-sm text-gray-500 mb-2">{{ product.category.name }}</p>
-                <div class="flex items-center gap-2">
-                    <span class="text-gray-400 line-through">{{ product.price }} ₽</span>
-                    <span class="text-pink-600 font-bold text-xl">{{ product.discount_price|floatformat:0 }} ₽</span>
+        <div class="product-card" style="position: relative;">
+            <div class="badge-discount">-{{ product.discount_percent }}%</div>
+            <a href="{{ product.get_absolute_url }}" style="text-decoration: none; color: inherit;">
+                <img src="{{ product.images.first.image.url }}" class="product-image">
+                <h3 style="margin: 15px 0 5px;">{{ product.name }}</h3>
+                <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <span class="price-new">{{ product.discount_price|floatformat:0 }} ₽</span>
+                    <span class="price-old">{{ product.price }} ₽</span>
                 </div>
-                <p class="text-green-600 text-sm mt-1">Экономия: {{ product.price|add:product.discount_price|floatformat:0 }} ₽</p>
-            </div>
-        </a>
+                <p style="color: #388e3c; font-size: 0.85rem; margin-top: 5px;">Экономия: {{ product.price|add:"-product.discount_price" }} ₽</p>
+            </a>
+        </div>
     {% endfor %}
 </div>
-{% else %}
-<p class="text-gray-500 text-center py-12">Сейчас нет активных акций. Загляните позже!</p>
-{% endif %}
 {% endblock %}

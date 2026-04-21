@@ -1,57 +1,188 @@
-/* Custom styles for Sweet World Confectionery Shop */
+/* Переменные из твоей палитры */
+:root {
+    --bg-color: #FCFAF8;
+    --text-color: #2F251E;
+    --primary-color: #C1582F;
+    --primary-hover: #a34826;
+    --secondary-color: #EEE9E3;
+    --card-bg: #ffffff;
+    --border-color: #e5e0da;
+    --error-color: #d32f2f;
+    --success-color: #388e3c;
+}
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
 }
 
-/* Smooth scroll */
-html {
-    scroll-behavior: smooth;
+/* Контейнеры */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #e91e63;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #c2185b;
+/* Шапка */
+header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-/* Gallery image transitions */
-#main-image {
-    transition: opacity 0.3s ease;
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Hover effects */
-.group:hover .group-hover\:scale-105 {
-    transform: scale(1.05);
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-decoration: none;
 }
 
-/* Badge pulse animation */
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+.nav-links a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: 0.3s;
 }
 
-/* Focus styles */
-input:focus, textarea:focus, select:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3);
+.nav-links a:hover {
+    color: var(--primary-color);
 }
 
-/* Breadcrumb hover */
-nav ol li a:hover {
-    color: #db2777;
+/* Кнопки */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: #fff !important;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
 }
 
-/* Table row hover */
-tbody tr:hover {
-    background-color: #fdf2f8;
+.btn:hover {
+    background-color: var(--primary-hover);
 }
+
+/* Карточки товаров */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.product-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Формы */
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* Сообщения */
+.message {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+}
+.success { background: #e8f5e9; color: var(--success-color); }
+.error { background: #ffebee; color: var(--error-color); }
+
+/* Дополнительно к предыдущим стилям */
+.form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px rgba(47, 37, 30, 0.05);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Дополнительные стили для каталога */
+.category-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    color: inherit;
+    transition: 0.3s;
+}
+.category-card:hover { border-color: var(--primary-color); transform: translateY(-3px); }
+.category-icon { font-size: 2.5rem; }
+
+.badge-discount {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--primary-color);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    z-index: 10;
+}
+
+.price-old { text-decoration: line-through; color: #888; font-size: 0.9rem; }
+.price-new { color: var(--primary-color); font-weight: bold; font-size: 1.3rem; }
