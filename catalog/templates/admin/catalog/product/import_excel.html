@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow">
+    <h2 class="text-xl font-bold mb-4">Импорт товаров из Excel</h2>
+    <p class="text-gray-600 text-sm mb-6">
+        Файл должен содержать два листа:<br>
+        <strong>category</strong> — колонки: название, описание, активна (да/нет)<br>
+        <strong>products</strong> — колонки: название, категория, описание, цена, скидка(%), активен (да/нет)
+    </p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition">
+            Загрузить
+        </button>
+    </form>
+    <p class="mt-4"><a href="{% url 'admin:catalog_product_changelist' %}" class="text-blue-600 hover:underline">← Назад к товарам</a></p>
+</div>
+{% endblock %}

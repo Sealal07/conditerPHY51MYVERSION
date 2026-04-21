@@ -1,0 +1,57 @@
+/* Custom styles for Sweet World Confectionery Shop */
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #e91e63;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #c2185b;
+}
+
+/* Gallery image transitions */
+#main-image {
+    transition: opacity 0.3s ease;
+}
+
+/* Hover effects */
+.group:hover .group-hover\:scale-105 {
+    transform: scale(1.05);
+}
+
+/* Badge pulse animation */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Focus styles */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.3);
+}
+
+/* Breadcrumb hover */
+nav ol li a:hover {
+    color: #db2777;
+}
+
+/* Table row hover */
+tbody tr:hover {
+    background-color: #fdf2f8;
+}

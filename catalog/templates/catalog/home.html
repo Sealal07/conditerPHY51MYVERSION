@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Сладкий Мир — Главная{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl p-8 md:p-12 mb-10 text-white">
+    <h1 class="text-3xl md:text-5xl font-bold mb-4">Свежие кондитерские изделия</h1>
+    <p class="text-lg md:text-xl mb-6 opacity-90">Торты, пирожные, печенье и многое другое — с любовью к каждой детали</p>
+    <a href="{% url 'catalog:category_list' %}" class="inline-block bg-white text-pink-600 px-6 py-3 rounded-lg font-semibold hover:bg-pink-50 transition">Перейти в каталог</a>
+</section>
+
+<!-- Popular Products -->
+<section class="mb-10">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+        <span class="text-yellow-500">⭐</span> Популярные товары
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        {% for product in popular_products %}
+            <div class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden group">
+                <div class="relative h-48 bg-gray-100 overflow-hidden">
+                    {% if product.images.first %}
+                        <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    {% else %}
+                        <div class="flex items-center justify-center h-full text-gray-400 text-4xl">🍰</div>
+                    {% endif %}
+                    {% if product.has_discount %}
+                        <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{{ product.discount_percent }}%</span>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-sm mb-1 truncate">{{ product.name }}</h3>
+                    <p class="text-xs text-gray-500 mb-2">{{ product.category.name }}</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            {% if product.has_discount %}
+                                <span class="text-gray-400 line-through text-xs">{{ product.price }} ₽</span>
+                                <span class="text-pink-600 font-bold ml-1">{{ product.discount_price|floatformat:0 }} ₽</span>
+                            {% else %}
+                                <span class="text-pink-600 font-bold">{{ product.price }} ₽</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-gray-500 col-span-full">Пока нет популярных товаров</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Promotions -->
+{% if promotions %}
+<section class="mb-10">
+    <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+        <span class="text-red-500">🔥</span> Акции
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for product in promotions %}
+            <a href="{{ product.get_absolute_url }}" class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden group">
+                <div class="relative h-48 bg-gray-100 overflow-hidden">
+                    {% if product.images.first %}
+                        <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    {% else %}
+                        <div class="flex items-center justify-center h-full text-gray-400 text-4xl">🎂</div>
+                    {% endif %}
+                    <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{{ product.discount_percent }}%</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold mb-1 truncate">{{ product.name }}</h3>
+                    <p class="text-gray-400 line-through text-sm">{{ product.price }} ₽</p>
+                    <p class="text-pink-600 font-bold text-lg">{{ product.discount_price|floatformat:0 }} ₽</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Categories -->
+<section class="mb-10">
+    <h2 class="text-2xl font-bold mb-6">Категории</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for cat in categories %}
+            <a href="{{ cat.get_absolute_url }}" class="bg-white rounded-xl shadow p-6 text-center hover:bg-pink-50 transition hover:shadow-md">
+                <div class="text-4xl mb-2">
+                    {% if 'торт' in cat.name|lower %}🎂{% elif 'печень' in cat.name|lower %}🍪{% elif 'конфет' in cat.name|lower %}🍬{% elif 'пирожн' in cat.name|lower %}🧁{% elif 'шоколад' in cat.name|lower %}🍫{% else %}🍰{% endif %}
+                </div>
+                <h3 class="font-semibold">{{ cat.name }}</h3>
+                <p class="text-xs text-gray-500 mt-1">{{ cat.products.filter.is_active.count }} товаров</p>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

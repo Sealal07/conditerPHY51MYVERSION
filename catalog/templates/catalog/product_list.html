@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold mb-2">{{ category.name }}</h1>
+<p class="text-gray-500 mb-6">{{ category.description }}</p>
+
+<!-- Search -->
+<form method="get" class="mb-6 max-w-md">
+    <div class="flex gap-2">
+        <input type="text" name="q" value="{{ form.q.value|default:'' }}" placeholder="Поиск в категории..." class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400">
+        <button type="submit" class="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition">Найти</button>
+    </div>
+</form>
+
+<!-- Products Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    {% for product in products %}
+        <a href="{{ product.get_absolute_url }}" class="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden group">
+            <div class="relative h-56 bg-gray-100 overflow-hidden">
+                {% if product.images.first %}
+                    <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                {% else %}
+                    <div class="flex items-center justify-center h-full text-gray-400 text-5xl">🍰</div>
+                {% endif %}
+                {% if product.has_discount %}
+                    <span class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">-{{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold mb-1 truncate">{{ product.name }}</h3>
+                <p class="text-sm text-gray-500 mb-3">{{ product.description|truncatechars:60 }}</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        {% if product.has_discount %}
+                            <span class="text-gray-400 line-through text-sm">{{ product.price }} ₽</span>
+                            <span class="text-pink-600 font-bold text-lg ml-1">{{ product.discount_price|floatformat:0 }} ₽</span>
+                        {% else %}
+                            <span class="text-pink-600 font-bold text-lg">{{ product.price }} ₽</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </a>
+    {% empty %}
+        <p class="text-gray-500 col-span-full text-center py-8">В этой категории пока нет товаров</p>
+    {% endfor %}
+</div>
+{% endblock %}
