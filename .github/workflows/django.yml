@@ -1,97 +1,61 @@
-# Название workflow (будет отображаться в GitHub Actions)
 name: Django CI
 
-# Настройка триггеров - когда запускать этот workflow
 on:
-  # Запускать при пуше (отправке кода) в ветку main
   push:
     branches: ["main"]
-  # Запускать при создании Pull Request'а в ветку main
   pull_request:
     branches: ["main"]
 
-# Определение задач (jobs) которые будут выполняться
 jobs:
-  # Название задачи - test (может быть любым)
   test:
-    # На каком виртуальном сервере запускать - Ubuntu последней версии
     runs-on: ubuntu-latest
 
-    # Определение дополнительных сервисов (контейнеров)
     services:
-      # Название сервиса - postgres
+      # Запускаем PostgreSQL для тестов
       postgres:
-        # Используем официальный Docker образ PostgreSQL версии 15
         image: postgres:15
-        # Переменные окружения для PostgreSQL контейнера
         env:
-          POSTGRES_USER: postgres      # Имя пользователя БД
-          POSTGRES_PASSWORD: postgres  # Пароль для БД
-          POSTGRES_DB: test_db         # Название тестовой БД
-        # Проброс портов: хост:контейнер (5432 стандартный порт PostgreSQL)
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
-        # Дополнительные опции для проверки здоровья контейнера
         options: >-
-          --health-cmd pg_isready      # Команда проверки готовности БД
-          --health-interval 10s        # Интервал проверки каждые 10 секунд
-          --health-timeout 5s          # Таймаут проверки 5 секунд
-          --health-retries 5           # Количество попыток проверки (5 раз)
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-    # Шаги, которые выполняются внутри основной виртуальной машины
     steps:
-      # Шаг 1: Клонирование кода репозитория
       - name: Checkout code
-        uses: actions/checkout@v4  # Официальный action для checkout
+        uses: actions/checkout@v4
 
-      # Шаг 2: Установка Python
       - name: Set up Python
-        uses: actions/setup-python@v5  # Официальный action для Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.13'  # Устанавливаем Python 3.13
+          python-version: '3.13'
 
-      # Шаг 3: Кэширование pip пакетов (ускоряет последующие запуски)
       - name: Cache pip packages
-        uses: actions/cache@v3  # Action для кэширования файлов
+        uses: actions/cache@v3
         with:
-          path: ~/.cache/pip     # Путь к кэшу pip
-          # Ключ кэша - уникальный для каждой ОС и requirements.txt
+          path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          # Если точного совпадения нет, используем любой кэш этой ОС
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # Шаг 4: Установка системных зависимостей (нужны для psycopg2)
       - name: Install system dependencies
         run: |
-          sudo apt-get update              # Обновляем список пакетов Ubuntu
-          sudo apt-get install -y libpq-dev  # Устанавливаем PostgreSQL клиент
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
 
-      # Шаг 5: Установка Python зависимостей из requirements.txt
       - name: Install Python dependencies
         run: |
-          pip install --upgrade pip        # Обновляем pip до последней версии
-          pip install -r requirements.txt  # Устанавливаем все зависимости
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-      # Шаг 6: Выполнение миграций (создание схемы БД)
       - name: Run migrations
         run: |
-          python manage.py migrate         # Команда Django для миграций
-        # Переменные окружения для Django (переопределяют settings.py)
-        env:
-          DB_NAME: test_db                 # Имя БД (совпадает с POSTGRES_DB)
-          DB_USER: postgres                # Пользователь БД
-          DB_PASSWORD: postgres            # Пароль БД
-          DB_HOST: localhost               # Хост БД (контейнер доступен на localhost)
-          DB_PORT: 5432                    # Порт БД
-          DEBUG: 'False'                   # Отключаем DEBUG режим
-          SECRET_KEY: 'test-secret-key-for-github-actions'  # Тестовый SECRET_KEY
-
-      # Шаг 7: Запуск тестов Django
-      - name: Run tests
-        run: |
-          python manage.py test --verbosity=2  # verbosity=2 для детального вывода
-        # Те же переменные окружения, что и для миграций
+          python manage.py migrate
         env:
           DB_NAME: test_db
           DB_USER: postgres
@@ -101,14 +65,23 @@ jobs:
           DEBUG: 'False'
           SECRET_KEY: 'test-secret-key-for-github-actions'
 
-      # Шаг 8: Загрузка отчетов о тестировании (опционально)
+      - name: Run tests
+        run: |
+          python manage.py test --verbosity=2
+        env:
+          DB_NAME: test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DEBUG: 'False'
+          SECRET_KEY: 'test-secret-key-for-github-actions'
+
       - name: Upload test coverage (optional)
-        # always() означает - выполнять даже если предыдущие шаги провалились
         if: always()
-        uses: actions/upload-artifact@v4  # Action для загрузки артефактов
+        uses: actions/upload-artifact@v4
         with:
-          name: test-reports               # Имя архива с отчетами
-          # Пути к файлам для загрузки (поддерживаются wildcards)
+          name: test-reports
           path: |
-            **/test-reports/              # Папки с отчетами тестов
-            **/coverage.xml               # Файл покрытия кода тестами
+            **/test-reports/
+            **/coverage.xml
