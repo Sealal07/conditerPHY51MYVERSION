@@ -1,0 +1,28 @@
+name: Django CI
+
+on:
+  push:
+    branches: ["main"]
+    pull_request:
+      branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3  # копируем в облако GitHub
+
+      - name: Set up Python
+        uses: actions/setup-python@v3 # устанавливаем питон
+        with:
+          python-version: '3.13'
+
+      - name: Set up Dependencies
+        run:
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run:
+          python manage.py test # запуск тестов
