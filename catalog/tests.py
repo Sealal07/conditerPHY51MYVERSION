@@ -13,6 +13,7 @@ class CatalogTest(TestCase):
         )
         self.product = Product.objects.create(
             name="Медовик",
+            slug="medovik",  # <--- ОБЯЗАТЕЛЬНО добавить slug
             category=self.category,
             price=Decimal('1000.00'),
             discount_percent=10,
@@ -26,17 +27,18 @@ class CatalogTest(TestCase):
 
     def test_discount_price_calculation(self):
         """Проверка вычисляемого свойства цены со скидкой"""
-        # 1000 - 10% = 900
         self.assertEqual(self.product.discount_price, Decimal('900.00'))
 
     def test_homepage_status_code(self):
         """Проверка доступности главной страницы"""
-        response = self.client.get(reverse('catalog:home'))
+        # Используем name='home' из корневых urls
+        response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
 
     def test_category_detail_view(self):
         """Проверка страницы конкретной категории"""
+        # Для категорий используем namespace 'catalog'
         url = reverse('catalog:category_detail', kwargs={'slug': self.category.slug})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Медовик") # Проверяем, что товар отобразился
+        self.assertContains(response, "Медовик")
